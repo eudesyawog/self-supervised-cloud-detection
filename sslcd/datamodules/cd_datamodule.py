@@ -27,7 +27,7 @@ class CloudDetectionDataModule(pl.LightningDataModule):
         seed: int,
         batch_size: int = 64,
         num_workers: int = 0,
-        training_set_fraction: float = 0.7,
+        training_set_fraction: float = 0.8,
         limit_dataset: float = 1.0,
         patch_size: int = 256,
         pretraining: bool = False,
@@ -57,7 +57,7 @@ class CloudDetectionDataModule(pl.LightningDataModule):
         parser.add_argument("--seed", type=int, default=42)
         parser.add_argument("--batch_size", type=int, default=64)
         parser.add_argument("--num_workers", type=int, default=8)
-        parser.add_argument("--training_set_fraction", type=float, default=0.7)
+        parser.add_argument("--training_set_fraction", type=float, default=0.8)
         parser.add_argument("--patch_size", type=int, default=256)
         parser.add_argument("--pretraining", action="store_true")
         parser.add_argument("--dataset", type=str, default="WHUS2-CD+", 
@@ -161,7 +161,6 @@ class CloudDetectionDataModule(pl.LightningDataModule):
                     patch_size=self.patch_size,
                     pretraining=self.pretraining
                 )
-                print (len(self.base_dataset))
 
                 # Split the dataset into 10 classes so we can stratify it into train and val
                 classes = self.base_dataset.df.cloudiness.astype(int) // 10
@@ -177,8 +176,6 @@ class CloudDetectionDataModule(pl.LightningDataModule):
                     self.train_dataset = Subset(self.base_dataset, train_indices)
 
                 self.val_dataset = Subset(self.base_dataset, val_indices)
-
-                print (len(self.train_dataset), len(self.val_dataset))
             
             elif self.dataset == "CloudSEN12":
 
@@ -204,8 +201,6 @@ class CloudDetectionDataModule(pl.LightningDataModule):
                     pretraining=self.pretraining,
                     task = self.task
                 )
-
-                print (len(self.train_dataset), len(self.val_dataset))
             
         elif stage == "test":
             if self.dataset == "WHUS2-CD+":
@@ -220,17 +215,6 @@ class CloudDetectionDataModule(pl.LightningDataModule):
                                                         task = self.task)
                 
     def train_dataloader(self):
-        print (type(self.train_dataset))
-        d = DataLoader(
-            self.train_dataset,
-            batch_size=self.batch_size,
-            num_workers=self.num_workers,
-            shuffle=True,
-            drop_last=True if self.pretraining else False,
-            pin_memory=True,
-        )
-
-        print (next(iter(d)))
         return DataLoader(
             self.train_dataset,
             batch_size=self.batch_size,

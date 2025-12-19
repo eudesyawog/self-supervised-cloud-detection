@@ -37,8 +37,6 @@ class WHUS2CDDataset(Dataset):
             train_idx, _ = next(sss.split(self.df, self.df.klass))
             self.df = self.df.iloc[train_idx]
 
-        print (len(self.df))
-
     def __len__(self):
         return len(self.df)
     

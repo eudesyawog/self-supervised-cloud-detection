@@ -14,50 +14,45 @@ from torchtyping import TensorType
 from torchgeo.datamodules.utils import group_shuffle_split
 from torchgeo.datasets import SEN12MS as BaseSEN12MS
 from torch.utils.data import DataLoader, Subset
-from ..transforms.moco_transforms import NullTransform
+from ..transforms.moco_transforms import MocoSEN12MSPacker
 
 class SEN12MSDataset(BaseSEN12MS):
     def __init__(self,
                  root, 
                  split, 
                  bands, 
+                 patch_size,
                  band_set = "all",
                  transforms=None, 
                  checksum=False,
-                 output_packer=None,
                  *args: Any,
                  **kwargs: Any):
         super().__init__(root, split, bands, transforms, checksum)
 
-        self.output_packer = output_packer
+        self.output_packer = MocoSEN12MSPacker(bands=band_set, patch_sz=patch_size)
         self.band_set = band_set
 
     def __getitem__(self, idx: int) -> Dict[str, Any]:
         sample = super().__getitem__(idx)
 
-        if not self.output_packer is None:
-            sample["image"] = sample["image"].numpy().astype(np.float32)
-            sample["mask"] = sample["mask"].unsqueeze(0).numpy().astype(np.float32)
+        sample["image"] = sample["image"].numpy().astype(np.float32)
+        sample["mask"] = sample["mask"].unsqueeze(0).numpy().astype(np.float32)
 
-            split_idx = 2 if self.band_set in ["all", "s1"] else 0
-            s1_img = sample["image"][:split_idx]
-            s2_img = sample["image"][split_idx:]
+        split_idx = 2 if self.band_set in ["all", "s1"] else 0
+        s1_img = sample["image"][:split_idx]
+        s2_img = sample["image"][split_idx:]
 
-            # print(s1_img.shape, s2_img.shape)
+        if s1_img.size == 0 :
+            s1_img = None 
+        if s2_img.size == 0 :  
+            s2_img = None 
 
-            if s1_img.size == 0 :
-                s1_img = None 
-            if s2_img.size == 0 :  
-                s2_img = None 
+        if "mask" in sample:
+            lc_img = sample["mask"]
+            if lc_img.size == 0 :  
+                lc_img = None 
 
-            if "mask" in sample:
-                lc_img = sample["mask"]
-                if lc_img.size == 0 :  
-                    lc_img = None 
-
-            return self.output_packer(s1=s1_img, s2=s2_img, lc=lc_img)
-        else:
-            return sample
+        return self.output_packer(s1=s1_img, s2=s2_img, lc=lc_img)
 
 class SEN12MSDataModule(pl.LightningDataModule):
     name = "SEN12MS"
@@ -65,6 +60,7 @@ class SEN12MSDataModule(pl.LightningDataModule):
     def __init__(
         self,
         batch_size: int = 64,
+        patch_size: int = 256,
         num_workers: int = 0,
         band_set: str = "all",
         data_dir: str = "./Datasets/SEN12MS",
@@ -86,13 +82,14 @@ class SEN12MSDataModule(pl.LightningDataModule):
         super().__init__()
 
         self.batch_size = batch_size
+        self.patch_size = patch_size
         self.num_workers = num_workers
         
         kwargs['band_set'] = band_set
         kwargs['bands'] = SEN12MSDataset.BAND_SETS[band_set]
         kwargs['root'] = data_dir
+        kwargs['patch_size'] = patch_size
         self.kwargs = kwargs
-        print (self.kwargs)
 
     def setup(self, stage: str) -> None:
         """Set up datasets.
@@ -178,10 +175,7 @@ class SEN12MSDataModule(pl.LightningDataModule):
     @staticmethod
     def add_model_specific_args(parent_parser):
         parser = ArgumentParser(parents=[parent_parser], add_help=False)
-        parser.add_argument("--band_set", type=str, default="s2-all", choices=["all", "s1", "s2-all", "s2-reduced"])
-        # parser.add_argument("--batch_size", type=int, default=64)
-        # parser.add_argument("--num_workers", type=int, default=8)
-        # parser.add_argument("--data_dir", type=str, default="./Datasets/SEN12MS")
+        parser.add_argument("--band_set", type=str, default="s2-all", choices=["s2-all", "s2-reduced"])
         parser.add_argument("--seed", type=int, default=42)
         
         

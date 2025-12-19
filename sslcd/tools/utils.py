@@ -29,6 +29,7 @@ def modify_choices(parser, dest, choices):
     for action in parser._actions:
         if action.dest == dest:
             action.choices = choices
+            action.default = choices[0]
             return
     else:
         raise AssertionError("argument {} not found".format(dest))

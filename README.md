@@ -25,27 +25,23 @@ This section will walk you through setting up the environment and running the co
    cd self-supervised-cloud-detection
    ```
 
-2. **Install dependencies:**
+2. **Install the dependencies:**
    ```bash
-   pip install -r requirements.txt
-   ```
-3. **Install the package in your environment**
-   ```bash 
    # Create a new environment e.g. a virtual environment
    python -m venv /path/to/new/virtual/environment
    source /path/to/new/virtual/environment/bin/activate 
    
    # Install all required packages
-   python setup.py
+   pip install .
    ```
 
 ### Dataset preprocessing
 
-Download and uncompress the 3 datasets (SEN12MS, WHUS2-CD+ and CloudSEN12) into your local repository. You will need to split the Sentinel-2 images of the WHUS2-CD+ dataset into (384 $\times$ 384) patches. To this end, use the code provided [here](https://github.com/zhumorui/Sentinel2_L1C_Preprocessing_Tools).
+Download and uncompress the 3 datasets (SEN12MS, WHUS2-CD+ and CloudSEN12) into your local repository. Download links can be found in the respective Github repositories provided in the section [`Overview`](#overview).  Additionnaly, you will need to split the Sentinel-2 images of the WHUS2-CD+ dataset into (384 $\times$ 384) patches. To this end, use the code provided [here](https://github.com/zhumorui/Sentinel2_L1C_Preprocessing_Tools).
 
 ### Running the code
 
-Examples are provided in the notebook `main.ipynb` on how to perform *pretraining* and fine-tuning of MoCo and DeepCluster for cloud detectionn using the datasets. 
+Examples are provided in the notebook `pretraining.ipynb` and `finetuning.ipynb` on how to perform *pretraining* and *fine-tuning* of MoCo and DeepCluster for cloud detection using the datasets. 
 
 ## Citation 
 
@@ -58,7 +54,6 @@ author = "Y.J.E. Gbodjo and L.H. Hughes and M. Molinier and D. Tuia and J. Li",
 year = "2025",
 month = "dec",
 day = "14",
-doi = "",
 journal = "Remote Sensing of Environment",
 issn = "0034-4257",
 publisher = "Elsevier"

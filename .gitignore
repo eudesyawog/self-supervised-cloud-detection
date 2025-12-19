@@ -3,3 +3,4 @@ __pycache__
 sslcd.egg-info
 experiments/
 checkpoints/
+build

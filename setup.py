@@ -5,7 +5,7 @@ with open("requirements.txt") as fp:
 
 setup(
     name='sslcd',
-    install_requires=install_requires,
+    install_requires=[],#install_requires,
     packages=find_packages(),
     version='0.1',
     description='Self-supervised representation learning methods (MoCo and DeepCluster) for cloud detection using Sentinel-2 images',
