@@ -13,7 +13,7 @@ from typing import Any
 from torch.utils.data import DataLoader
 
 from glob import glob
-from ..tools.utils import dataset_with_index
+from ..tools.utils import IndexedDatasetWrapper
 from .cd_datasets import WHUS2CDDataset, CloudSEN12Dataset
 
 warnings.filterwarnings("ignore", category=rasterio.errors.NotGeoreferencedWarning)
@@ -170,29 +170,25 @@ class CloudDetectionDataModule(pl.LightningDataModule):
                     ).split(np.arange(len(classes)), classes)
                 )
 
+                train_dataset = Subset(self.base_dataset, train_indices)
                 if self.pretraining:
-                    self.train_dataset = dataset_with_index(Subset)(self.base_dataset, train_indices)     
+                    self.train_dataset = IndexedDatasetWrapper(train_dataset)  
                 else:
-                    self.train_dataset = Subset(self.base_dataset, train_indices)
+                    self.train_dataset = train_dataset
 
                 self.val_dataset = Subset(self.base_dataset, val_indices)
             
             elif self.dataset == "CloudSEN12":
-
+                train_dataset = CloudSEN12Dataset(self.data_dir,
+                                                    phase="train",
+                                                    patch_size=self.patch_size,
+                                                    pretraining=self.pretraining,
+                                                    task = self.task,
+                                                    subset_fraction=self.limit_dataset_fraction)
                 if self.pretraining:
-                    self.train_dataset = dataset_with_index(CloudSEN12Dataset)(self.data_dir,
-                                                                                phase="train",
-                                                                                patch_size=self.patch_size,
-                                                                                pretraining=self.pretraining,
-                                                                                task = self.task,
-                                                                                subset_fraction=self.limit_dataset_fraction)
+                    self.train_dataset = IndexedDatasetWrapper(train_dataset)
                 else:
-                    self.train_dataset = CloudSEN12Dataset(self.data_dir,
-                                                            phase="train",
-                                                            patch_size=self.patch_size,
-                                                            pretraining=self.pretraining,
-                                                            task = self.task,
-                                                            subset_fraction=self.limit_dataset_fraction)
+                    self.train_dataset = train_dataset
         
                 self.val_dataset = CloudSEN12Dataset(
                     self.data_dir,

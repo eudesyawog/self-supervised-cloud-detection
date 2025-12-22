@@ -2,6 +2,8 @@ import random
 import torch
 import numpy as np
 import pytorch_lightning as pl
+from typing import Any, Dict, List, Optional, Tuple
+from torch.utils.data._utils.collate import default_collate
 
 def seed_all(seed: int):
     torch.backends.cudnn.deterministic = True
@@ -66,17 +68,13 @@ def remove_bias_and_norm_from_weight_decay(parameter_groups):
     return out
 
 
-def dataset_with_index(DatasetClass):
-    """Factory for datasets that also returns the data index.
-    Args:
-        DatasetClass (Type[Dataset]): Dataset class to be wrapped.
-    Returns:
-        Type[Dataset]: dataset with index.
-    """
+class IndexedDatasetWrapper(torch.utils.data.Dataset):
+    def __init__(self, original_dataset):
+        self.dataset = original_dataset
+        
+    def __getitem__(self, index):
+        data = self.dataset[index]
+        return (torch.tensor(index), *data)
 
-    class DatasetWithIndex(DatasetClass):
-        def __getitem__(self, index):
-            data = super().__getitem__(index)
-            return (index, *data)
-
-    return DatasetWithIndex
+    def __len__(self):
+        return len(self.dataset)
