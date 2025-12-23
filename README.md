@@ -57,6 +57,7 @@ year = "2025",
 month = "dec",
 day = "14",
 journal = "Remote Sensing of Environment",
+doi = "https://doi.org/10.1016/j.rse.2025.115205",
 issn = "0034-4257",
 publisher = "Elsevier"
 }
