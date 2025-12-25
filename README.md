@@ -50,16 +50,16 @@ Examples are provided in the notebook `pretraining.ipynb` and `finetuning.ipynb`
 If you use MoCo and DeepCluster for cloud detection in your research, please cite the paper:
 
 ```bibtex
-@article{Gbodjo2025,
-title = "Self-Supervised Representation Learning for Cloud Detection Using Sentinel-2 Images",
-author = "Y.J.E. Gbodjo and L.H. Hughes and M. Molinier and D. Tuia and J. Li",
-year = "2025",
-month = "dec",
-day = "14",
-journal = "Remote Sensing of Environment",
-doi = "https://doi.org/10.1016/j.rse.2025.115205",
-issn = "0034-4257",
-publisher = "Elsevier"
+@article{Gbodjo2026,
+title = {Self-supervised representation learning for cloud detection using Sentinel-2 images},
+author = {Yawogan Jean Eudes Gbodjo and Lloyd Haydn Hughes and Matthieu Molinier and Devis Tuia and Jun Li},
+journal = {Remote Sensing of Environment},
+volume = {334},
+pages = {115205},
+year = {2026},
+issn = {0034-4257},
+doi = {https://doi.org/10.1016/j.rse.2025.115205},
+url = {https://www.sciencedirect.com/science/article/pii/S0034425725006091},
 }
 ```
 ## License
