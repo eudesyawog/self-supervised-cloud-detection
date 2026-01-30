@@ -62,8 +62,6 @@ doi = {https://doi.org/10.1016/j.rse.2025.115205},
 url = {https://www.sciencedirect.com/science/article/pii/S0034425725006091},
 }
 ```
-## License
-This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
 
 ## Contact
 If you have any questions or feedback regarding the code, please feel free to reach out to jean-eudes[dot]gbodjo[at]vtt[dot]fi.
